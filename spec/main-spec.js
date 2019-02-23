@@ -1,4 +1,6 @@
-const printInventory = require('../main/main');
+const main = require('../main/main');
+const printInventory = main.printInventory;
+const formateInputs = main.formateInputs;
 
 describe('pos', function () {
     var inputs;
@@ -38,5 +40,35 @@ describe('pos', function () {
             '**********************';
 
         expect(console.log).toHaveBeenCalledWith(expectText);
+    });
+});
+
+describe('formateInputs', function () {
+    it('should return object array that generated from inputs array', function () {
+        let inputs = [
+            'ITEM000001',
+            'ITEM000001',
+            'ITEM000001',
+            'ITEM000001',
+            'ITEM000001',
+            'ITEM000003-2',
+            'ITEM000005',
+            'ITEM000005',
+            'ITEM000005'
+        ];
+        let result = formateInputs(inputs);
+        let expected=[{
+            id:'ITEM000001',
+            quantity:5
+        },
+        {
+            id:'ITEM000003',
+            quantity:2
+        },
+        {
+            id:'ITEM000005',
+            quantity:3
+        }];
+        expect(result).toEqual(expected)
     });
 });
