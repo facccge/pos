@@ -123,17 +123,58 @@ describe('formateInputs', function () {
         ];
         let result = formateInputs(inputs);
         let expected=[{
+            barcode:'ITEM000001',
+            quantity:5
+        },
+        {
+            barcode:'ITEM000003',
+            quantity:2
+        },
+        {
+            barcode:'ITEM000005',
+            quantity:3
+        }];
+        expect(result).toEqual(expected)
+    });
+});
+
+describe('buildOriginalBill', function () {
+    it('should return bill without promotion', function () {
+        let inputs = [{
             id:'ITEM000001',
             quantity:5
         },
         {
-            id:'ITEM000003',
+            barcode:'ITEM000003',
             quantity:2
         },
         {
-            id:'ITEM000005',
+            barcode:'ITEM000005',
             quantity:3
         }];
+        let result = buildOriginalBill(inputs);
+        let expected={itemDetails:[{
+            barcode:'ITEM000001',
+            name:'雪碧',
+            price: 3.00,
+            unit: '瓶',
+            quantity:5
+        },
+        {
+            barcode:'ITEM000003',
+            name:'雪碧',
+            price: 3.00,
+            unit: '瓶',
+            quantity:5
+        },
+        {
+            barcode:'ITEM000005',
+            name:'雪碧',
+            price: 3.00,
+            unit: '瓶',
+            quantity:5
+        }],
+        totalPrice:15.00};
         expect(result).toEqual(expected)
     });
 });
