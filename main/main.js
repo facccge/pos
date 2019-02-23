@@ -28,4 +28,30 @@ function formateInputs(inputs){
     return formatedInputs;
 }
 
-module.exports = {printInventory,formateInputs};
+function buildOriginalBill(formatedSelectedItems,items){
+    let itemDetails = new Array();
+    let totalPrice = 0.00;
+    for(let formatedSelectedItem of formatedSelectedItems){
+      for(let item of items){
+        if(formatedSelectedItem.barcode == item.barcode){
+          // barcode,name,price,unit,quantity,subtotalPrice
+          let itemDetail = {}; 
+          itemDetail.barcode = item.barcode;
+          itemDetail.name = item.name;
+          itemDetail.price = item.price;
+          itemDetail.unit = item.unit;
+          itemDetail.quantity = formatedSelectedItem.quantity;
+          itemDetail.subtotalPrice = itemDetail.price * itemDetail.quantity;
+          itemDetails.push(itemDetail);
+          totalPrice += itemDetail.subtotalPrice;
+        }
+      }
+    }  
+    //itemDetails,totalPrice
+    let originalBill = {};
+    originalBill.itemDetails = itemDetails;
+    originalBill.totalPrice = totalPrice;
+    return originalBill
+  }
+
+module.exports = {printInventory,formateInputs,buildOriginalBill};

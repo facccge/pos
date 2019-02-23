@@ -4,6 +4,7 @@ const printInventory = main.printInventory;
 const formateInputs = main.formateInputs;
 const loadAllItems = datbase.loadAllItems
 const loadPromotions = datbase.loadPromotions
+const buildOriginalBill = main.buildOriginalBill
 
 describe('pos', function () {
     var inputs;
@@ -140,8 +141,8 @@ describe('formateInputs', function () {
 
 describe('buildOriginalBill', function () {
     it('should return bill without promotion', function () {
-        let inputs = [{
-            id:'ITEM000001',
+        let inputs1 = [{
+            barcode:'ITEM000001',
             quantity:5
         },
         {
@@ -152,29 +153,70 @@ describe('buildOriginalBill', function () {
             barcode:'ITEM000005',
             quantity:3
         }];
-        let result = buildOriginalBill(inputs);
+        let inputs2 = [
+            {
+                barcode: 'ITEM000000',
+                name: '可口可乐',
+                unit: '瓶',
+                price: 3.00
+            },
+            {
+                barcode: 'ITEM000001',
+                name: '雪碧',
+                unit: '瓶',
+                price: 3.00
+            },
+            {
+                barcode: 'ITEM000002',
+                name: '苹果',
+                unit: '斤',
+                price: 5.50
+            },
+            {
+                barcode: 'ITEM000003',
+                name: '荔枝',
+                unit: '斤',
+                price: 15.00
+            },
+            {
+                barcode: 'ITEM000004',
+                name: '电池',
+                unit: '个',
+                price: 2.00
+            },
+            {
+                barcode: 'ITEM000005',
+                name: '方便面',
+                unit: '袋',
+                price: 4.50
+            }
+        ];
+        let result = buildOriginalBill(inputs1,inputs2);
         let expected={itemDetails:[{
             barcode:'ITEM000001',
-            name:'雪碧',
-            price: 3.00,
+            name: '雪碧',
             unit: '瓶',
-            quantity:5
+            price: 3.00,
+            quantity:5,
+            subtotalPrice:15.00
         },
         {
             barcode:'ITEM000003',
-            name:'雪碧',
-            price: 3.00,
-            unit: '瓶',
-            quantity:5
+            name: '荔枝',
+            unit: '斤',
+            price: 15.00,
+            quantity:2,
+            subtotalPrice:30.00
         },
         {
             barcode:'ITEM000005',
-            name:'雪碧',
-            price: 3.00,
-            unit: '瓶',
-            quantity:5
+            name: '方便面',
+            unit: '袋',
+            price: 4.50,
+            quantity:3,
+            subtotalPrice:13.50
         }],
-        totalPrice:15.00};
+        totalPrice:58.50};
         expect(result).toEqual(expected)
     });
 });
