@@ -6,6 +6,7 @@ const loadAllItems = datbase.loadAllItems
 const loadPromotions = datbase.loadPromotions
 const buildOriginalBill = main.buildOriginalBill
 const usePromotions = main.usePromotions
+const buildFinalBill = main.buildFinalBill
 
 describe('pos', function () {
     var inputs;
@@ -274,6 +275,106 @@ describe('Use promotions', function () {
             unit:'袋'
         }]
       };
+      expect(summary).toEqual(expected)
+    });
+});
+
+
+describe('Build final bill', function () {
+    it('should return final bill object', function() {
+      let inputs1 = {itemDetails:[{
+        barcode:'ITEM000001',
+        name: '雪碧',
+        unit: '瓶',
+        price: 3.00,
+        quantity:5,
+        subtotalPrice:15.00
+        },
+        {
+            barcode:'ITEM000003',
+            name: '荔枝',
+            unit: '斤',
+            price: 15.00,
+            quantity:2,
+            subtotalPrice:30.00
+        },
+        {
+            barcode:'ITEM000005',
+            name: '方便面',
+            unit: '袋',
+            price: 4.50,
+            quantity:3,
+            subtotalPrice:13.50
+        }],
+        promotionInfo:{
+            description:'挥泪赠送商品',
+            isabled:true,
+            discountedPrice:7.5,
+            itemDetails:[{
+                name:'雪碧',
+                quantity:1,
+                unit:'瓶'
+            },{
+                name:'方便面',
+                quantity:1,
+                unit:'袋'
+            }]
+        },
+        totalPrice:58.50};
+        let inputs2 = {
+            description:'挥泪赠送商品',
+            isabled:true,
+            discountedPrice:7.5,
+            itemDetails:[{
+                name:'雪碧',
+                quantity:1,
+                unit:'瓶'
+            },{
+                name:'方便面',
+                quantity:1,
+                unit:'袋'
+            }]
+          };
+      let summary = buildFinalBill(inputs1,inputs2);
+      let expected = {itemDetails:[{
+        barcode:'ITEM000001',
+        name: '雪碧',
+        unit: '瓶',
+        price: 3.00,
+        quantity:5,
+        subtotalPrice:15.00
+        },
+        {
+            barcode:'ITEM000003',
+            name: '荔枝',
+            unit: '斤',
+            price: 15.00,
+            quantity:2,
+            subtotalPrice:30.00
+        },
+        {
+            barcode:'ITEM000005',
+            name: '方便面',
+            unit: '袋',
+            price: 4.50,
+            quantity:3,
+            subtotalPrice:13.50
+        }],
+        promotionInfo:{
+            description:'挥泪赠送商品',
+            isabled:true,
+            discountedPrice:7.5,
+            itemDetails:[{
+                name:'雪碧',
+                quantity:1,
+                unit:'瓶'
+            },{
+                name:'方便面',
+                quantity:1,
+                unit:'袋'
+            }]
+          },
+        totalPrice:51.00};
       expect(summary).toEqual(expected)
     });
 });

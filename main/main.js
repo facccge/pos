@@ -80,11 +80,19 @@ function usePromotions(originalBill,promotions){
             }
             promotionInfo.itemDetails=promotionInfoItemDetails;
             promotionInfo.discountedPrice = discountedPrice;
-  
-        }
+          }
     }
-
     return promotionInfo
+}
+
+function buildFinalBill(originalBill,promotionInfo){
+    let finalBill = {};
+    finalBill.itemDetails = originalBill.itemDetails;
+    finalBill.totalPrice = originalBill.totalPrice - promotionInfo.discountedPrice;
+    if(promotionInfo.isabled == true){
+      finalBill.promotionInfo = promotionInfo;
+    }
+    return finalBill;
   }
 
-module.exports = {printInventory,formateInputs,buildOriginalBill,usePromotions};
+module.exports = {printInventory,formateInputs,buildOriginalBill,usePromotions,buildFinalBill};
