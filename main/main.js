@@ -1,7 +1,15 @@
+const datbase = require('./datbase')
+const loadAllItems = datbase.loadAllItems
+const loadPromotions = datbase.loadPromotions
+
 function printInventory(inputs) {
+    let items = loadAllItems();
+    let promoitons = loadPromotions();
     let formatedInputs = formateInputs(inputs);
-    let originalBill = buildOriginalBill(formatedInputs);
-    return formatedInputs;
+    let originalBill = buildOriginalBill(formatedInputs,items);
+    let promotionInfo = usePromotions(originalBill,promoitons);
+    let finalBill = buildFinalBill(originalBill,promotionInfo);
+    printBill(finalBill);
 }
 
 function formateInputs(inputs){
