@@ -1,5 +1,6 @@
 function printInventory(inputs) {
     let formatedInputs = formateInputs(inputs);
+    let originalBill = buildOriginalBill(formatedInputs);
     return formatedInputs;
 }
 
@@ -70,6 +71,7 @@ function usePromotions(originalBill,promotions){
                   if(itemDetail.barcode == barcode){
                     // name,unit,quantity
                     let promotionInfoItemDetail = {}; 
+                    promotionInfoItemDetail.barcode = itemDetail.barcode;
                     promotionInfoItemDetail.name = itemDetail.name;
                     promotionInfoItemDetail.unit = itemDetail.unit;
                     promotionInfoItemDetail.quantity = 1;
@@ -88,11 +90,49 @@ function usePromotions(originalBill,promotions){
 function buildFinalBill(originalBill,promotionInfo){
     let finalBill = {};
     finalBill.itemDetails = originalBill.itemDetails;
-    finalBill.totalPrice = originalBill.totalPrice - promotionInfo.discountedPrice;
-    if(promotionInfo.isabled == true){
-      finalBill.promotionInfo = promotionInfo;
+    finalBill.discountedPrice = 0.0;
+    if(promotionInfo.isabled==true){
+        finalPromotionInfo = {};
+        finalPromotionInfo.itemDetails = promotionInfo.itemDetails;
+        finalPromotionInfo.description = promotionInfo.description;
+        finalBill.promotionInfo = finalPromotionInfo;
+        finalBill.discountedPrice = promotionInfo.discountedPrice;
+        finalBill.totalPrice = originalBill.totalPrice - promotionInfo.discountedPrice;
+        for(let itemDetail of finalBill.itemDetails){
+            for(let discountedItemDetail of promotionInfo.itemDetails){
+                if(itemDetail.barcode == discountedItemDetail.barcode){
+                    itemDetail.subtotalPrice = itemDetail.price * (itemDetail.quantity-discountedItemDetail.quantity);
+                }
+            }
+        }    
     }
     return finalBill;
   }
 
-module.exports = {printInventory,formateInputs,buildOriginalBill,usePromotions,buildFinalBill};
+  function printBill(finalBill){
+      let outputString = '***<没钱赚商店>购物清单***\n';
+    for(let itemDetail of finalBill.itemDetails){
+      outputString += '名称：' 
+      + itemDetail.name + '，数量：'
+      + itemDetail.quantity 
+      + itemDetail.unit + '，单价：'
+      + itemDetail.price.toFixed(2) +'(元)，小计：'
+      + itemDetail.subtotalPrice.toFixed(2)+'(元)\n';
+    }
+    outputString += '----------------------\n';
+    if(finalBill.promotionInfo){
+        outputString += finalBill.promotionInfo.description+'：\n';
+        for(let promotionInfoItemDetail of finalBill.promotionInfo.itemDetails){
+            outputString += '名称：' 
+            + promotionInfoItemDetail.name + '，数量：'
+            + promotionInfoItemDetail.quantity 
+            + promotionInfoItemDetail.unit + '\n';
+        }
+        outputString += '----------------------\n';
+    }
+    outputString += '总计：'+finalBill.totalPrice.toFixed(2)+'(元)\n';
+    outputString += '节省：'+finalBill.discountedPrice.toFixed(2)+'(元)\n';
+    outputString += '**********************';
+    console.log(outputString)
+  }
+module.exports = {printInventory,formateInputs,buildOriginalBill,usePromotions,buildFinalBill,printBill};
