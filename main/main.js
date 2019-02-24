@@ -52,6 +52,39 @@ function buildOriginalBill(formatedSelectedItems,items){
     originalBill.itemDetails = itemDetails;
     originalBill.totalPrice = totalPrice;
     return originalBill
+}
+
+function usePromotions(originalBill,promotions){
+    let promotionInfo = {};
+    promotionInfo.isabled = false;
+    promotionInfo.description = '';
+    promotionInfo.itemDetails = [];
+    for(let promotion of promotions){
+        if(promotion.type == 'BUY_TWO_GET_ONE_FREE'){
+            promotionInfo.isabled = true;
+            promotionInfo.description = '挥泪赠送商品';
+            let promotionInfoItemDetails = new Array();
+            let discountedPrice = 0.0;
+            for(let itemDetail of originalBill.itemDetails){
+                for(let barcode of promotion.barcodes){
+                  if(itemDetail.barcode == barcode){
+                    // name,unit,quantity
+                    let promotionInfoItemDetail = {}; 
+                    promotionInfoItemDetail.name = itemDetail.name;
+                    promotionInfoItemDetail.unit = itemDetail.unit;
+                    promotionInfoItemDetail.quantity = 1;
+                    promotionInfoItemDetails.push(promotionInfoItemDetail);
+                    discountedPrice += itemDetail.price * promotionInfoItemDetail.quantity;
+                  }
+                }
+            }
+            promotionInfo.itemDetails=promotionInfoItemDetails;
+            promotionInfo.discountedPrice = discountedPrice;
+  
+        }
+    }
+
+    return promotionInfo
   }
 
-module.exports = {printInventory,formateInputs,buildOriginalBill};
+module.exports = {printInventory,formateInputs,buildOriginalBill,usePromotions};

@@ -5,6 +5,7 @@ const formateInputs = main.formateInputs;
 const loadAllItems = datbase.loadAllItems
 const loadPromotions = datbase.loadPromotions
 const buildOriginalBill = main.buildOriginalBill
+const usePromotions = main.usePromotions
 
 describe('pos', function () {
     var inputs;
@@ -218,5 +219,61 @@ describe('buildOriginalBill', function () {
         }],
         totalPrice:58.50};
         expect(result).toEqual(expected)
+    });
+});
+
+describe('Use promotions', function () {
+    it('should return promotion info object when use promotion BUY_TWO_GET_ONE_FREE', function() {
+      let inputs1 = {itemDetails:[{
+        barcode:'ITEM000001',
+        name: '雪碧',
+        unit: '瓶',
+        price: 3.00,
+        quantity:5,
+        subtotalPrice:15.00
+        },
+        {
+            barcode:'ITEM000003',
+            name: '荔枝',
+            unit: '斤',
+            price: 15.00,
+            quantity:2,
+            subtotalPrice:30.00
+        },
+        {
+            barcode:'ITEM000005',
+            name: '方便面',
+            unit: '袋',
+            price: 4.50,
+            quantity:3,
+            subtotalPrice:13.50
+        }],
+        totalPrice:58.50};
+        let inputs2 = [
+            {
+                type: 'BUY_TWO_GET_ONE_FREE',
+                barcodes: [
+                    'ITEM000000',
+                    'ITEM000001',
+                    'ITEM000005'
+                ]
+            }
+        ];
+      let summary = usePromotions(inputs1,inputs2);
+      let expected = {
+        description:'挥泪赠送商品',
+        isabled:true,
+        discountedPrice:7.5,
+        itemDetails:[{
+            name:'雪碧',
+            quantity:1,
+            unit:'瓶'
+        },{
+            name:'方便面',
+            quantity:1,
+            unit:'袋'
+        }]
+      };
+      expect(summary).toEqual(expected)
     });
 });
